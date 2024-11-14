@@ -9,9 +9,9 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -52,7 +52,8 @@ public class IncompletePortal extends AbstractPortal {
         int spread = frame.interior.size();
         for (int j=0; j<count; j++) {
             Location particleLoc = new Location(block.getWorld(), block.getX() + (rand.nextDouble() * spread), block.getY() + (rand.nextDouble() * spread), block.getZ() + (rand.nextDouble() * spread));
-            block.getWorld().spawnParticle(Particle.CRIT_MAGIC, particleLoc, 1);
+            //block.getWorld().spawnParticle(Particle.CRIT_MAGIC, particleLoc, 1);
+            //block.getWorld().playEffect(particleLoc, Effect.BLAZE_SHOOT);
         }
         return new IncompletePortal(block.getType().name(), frame);
     }
@@ -78,7 +79,8 @@ public class IncompletePortal extends AbstractPortal {
         if (this.frames[0].interior.size() > 0) {
             Vector vec = frames[0].interior.get(0);
             Location loc = new Location(frames[0].world, vec.getX(), vec.getY(), vec.getZ());
-            loc.getWorld().strikeLightningEffect(loc);
+            loc.getWorld().playEffect(loc, Effect.BLAZE_SHOOT, 1);
+            //loc.getWorld().strikeLightningEffect(loc);
         }
         Location loc;
         for (Vector vec : frames[0].interior) {

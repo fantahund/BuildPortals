@@ -41,15 +41,15 @@ public class ActivatedPortalFrame extends PortalFrame {
 
         Location location = block.getLocation();
         if (Portal.isInAPortal(location) || IncompletePortal.isInAPortal(location)) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Placed block set in already active portal. Doing nothing.");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Placed block set in already active portal. Doing nothing.");
             return null;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is not in an active portal. Continuing.");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is not in an active portal. Continuing.");
         if (!BuildPortals.activatorMaterials.contains(block.getType())) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is not an activator.");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is not an activator.");
             return null;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is an activator block. Continuing.");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is an activator block. Continuing.");
         String currentActivatorName = block.getType().name();
         String frameMaterialName = BuildPortals.config.getString("PortalMaterial");
         Block firstFrameBaseBlock = block.getLocation().add(new Vector(0, -1 ,0)).getBlock();
@@ -59,10 +59,10 @@ public class ActivatedPortalFrame extends PortalFrame {
         // z = Southing
         // Check if activator block was placed on a frame block
         if ( ! firstFrameBaseBlock.getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Placed activator block is on " + firstFrameBaseBlock.getType().name() + ", not " + Material.getMaterial(frameMaterialName).name());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Placed activator block is on " + firstFrameBaseBlock.getType().name() + ", not " + Material.getMaterial(frameMaterialName).name());
             return null;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is over a portal frame block. Continuing.");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Placed block is over a portal frame block. Continuing.");
         
         Block activatorBlock;
         HashMap<String, Vector> unitVectors = new HashMap<>();
@@ -109,10 +109,10 @@ public class ActivatedPortalFrame extends PortalFrame {
         westMost = activatorBlock.getLocation().getBlockX();
         //Check for portal base under activator block
         if (! activatorBlock.getLocation().add(new Vector(0, -1, 0)).getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Missing portal base under an activator block.");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Missing portal base under an activator block.");
             return null;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Adding base block at: " + baseBlock.getLocation().toVector().toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Adding base block at: " + baseBlock.getLocation().toVector().toString());
         baseVecs.add(baseBlock.getLocation().toVector());
         
         while (actIter.hasNext()) {
@@ -123,7 +123,7 @@ public class ActivatedPortalFrame extends PortalFrame {
                 BuildPortals.logger.log(BuildPortals.logLevel, "Missing portal base under an activator block.");
                 return null;
             }
-            BuildPortals.logger.log(BuildPortals.logLevel, "Adding base block at: " + baseBlock.getLocation().toVector().toString());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Adding base block at: " + baseBlock.getLocation().toVector().toString());
             baseVecs.add(baseBlock.getLocation().toVector());
             if (activatorBlock.getLocation().getBlockZ() < northMost) {
                 northMost = activatorBlock.getLocation().getBlockZ();
@@ -132,7 +132,7 @@ public class ActivatedPortalFrame extends PortalFrame {
                 westMost = activatorBlock.getLocation().getBlockX();
             }
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Northwest activator found at: X=" + westMost + ", Z=" + northMost);
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Northwest activator found at: X=" + westMost + ", Z=" + northMost);
         
         // Find the most southeast coordinate of activator block
         actIter = activatorBlocks.iterator();
@@ -155,7 +155,7 @@ public class ActivatedPortalFrame extends PortalFrame {
                 eastMost = activatorBlock.getLocation().getBlockX();
             }
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Southeast activator found at: X=" + eastMost + ", Z=" + southMost);
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Southeast activator found at: X=" + eastMost + ", Z=" + southMost);
         
         ArrayList<Block> wallNW = new ArrayList<>();
         ArrayList<Block> wallSE = new ArrayList<>();
@@ -164,66 +164,66 @@ public class ActivatedPortalFrame extends PortalFrame {
         Location activatorNW = new Location(block.getWorld(), westMost, block.getLocation().getBlockY(), northMost);
         Location activatorSE = new Location(block.getWorld(), eastMost, block.getLocation().getBlockY(), southMost);
 
-        BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
 
         // North/South oriented portal
         // North of activatorNW
         Location testLoc = new Location(activatorNW.getWorld(), activatorNW.getX(), activatorNW.getY(), activatorNW.getZ()-1);
-        BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
-        BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
+       // BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
 
         if (testLoc.getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
             wallNW.add(testLoc.getBlock());
             // South of activatorSE
-            BuildPortals.logger.log(BuildPortals.logLevel, "SE activator at: " + activatorSE.toVector().toString());
-            BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
+            ////BuildPortals.logger.log(BuildPortals.logLevel, "SE activator at: " + activatorSE.toVector().toString());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
             testLoc = new Location(activatorSE.getWorld(), activatorSE.getX(), activatorSE.getY(), activatorSE.getZ()+1);
             if ( ! testLoc.getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
-                BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
-                BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing a South wall.");
+                //BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
+                //BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing a South wall.");
                 return null;
             }
             wallSE.add(testLoc.getBlock());
             yaw = 90F; //West
         } else {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
         }
 
         // East/West oriented portal
         // West of activatorNW
         testLoc = new Location(activatorNW.getWorld(), activatorNW.getX()-1, activatorNW.getY(), activatorNW.getZ());
-        BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
-        BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "NW activator at: " + activatorNW.toVector().toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
 
         if (testLoc.getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
             wallNW.add(testLoc.getBlock());
             // East of activatorSE
             testLoc = new Location(activatorSE.getWorld(), activatorSE.getX()+1, activatorSE.getY(), activatorSE.getZ());
-            BuildPortals.logger.log(BuildPortals.logLevel, "SE activator at: " + activatorSE.toVector().toString());
-            BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "SE activator at: " + activatorSE.toVector().toString());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Look for portal: " + testLoc.toVector().toString());
             if ( ! testLoc.getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
-                BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
-                BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing an East wall.");
+                //BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
+                //BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing an East wall.");
                 return null;
             }
             wallSE.add(testLoc.getBlock());
             yaw = 180F; // North
         } else {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Block at " + testLoc.toVector().toString() + ": " + testLoc.getBlock().getType().name());
         }
         if (wallSE.size() + wallNW.size() < 2) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing a North/West wall.");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Portal is missing a North/West wall.");
             return null;
         }
 
-        BuildPortals.logger.log(BuildPortals.logLevel, "Portal walls adjacent to activation blocks found. Continuing.");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Portal walls adjacent to activation blocks found. Continuing.");
         // Find top of North/West wall
         Block nextBlock = wallNW.get(0).getLocation().add(new Vector(0,1,0)).getBlock();
         while (nextBlock.getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
             wallNW.add(nextBlock);
             nextBlock = nextBlock.getLocation().add(new Vector(0,1,0)).getBlock();
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "North/West wall height: " + wallNW.size());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "North/West wall height: " + wallNW.size());
 
         // Find top of South/East wall
         nextBlock = wallSE.get(0).getLocation().add(new Vector(0,1,0)).getBlock();
@@ -231,10 +231,10 @@ public class ActivatedPortalFrame extends PortalFrame {
             wallSE.add(nextBlock);
             nextBlock = nextBlock.getLocation().add(new Vector(0,1,0)).getBlock();
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "South/East wall height: " + wallSE.size());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "South/East wall height: " + wallSE.size());
         
         int portalHeight = java.lang.Math.min(wallNW.size(), wallSE.size());
-        BuildPortals.logger.log(BuildPortals.logLevel, "Initial portal height: " + portalHeight);
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Initial portal height: " + portalHeight);
         Block portalTopBlock;
         Block currentActivatorBlock;
         actIter = activatorBlocks.iterator();
@@ -247,13 +247,13 @@ public class ActivatedPortalFrame extends PortalFrame {
             BuildPortals.logger.log(BuildPortals.logLevel, "Test at: " + portalTopBlock.getLocation().toVector().toString());
             if (portalTopBlock.getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
                 portalHeight = i;
-                BuildPortals.logger.log(BuildPortals.logLevel, "Portal height adjusted to: " + portalHeight);
+                //BuildPortals.logger.log(BuildPortals.logLevel, "Portal height adjusted to: " + portalHeight);
             }
         }
 
         // Portal must be at least 2m tall
         if (portalHeight < 2) {
-            BuildPortals.logger.log(BuildPortals.logLevel, "Portal walls are not tall enough.");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Portal walls are not tall enough.");
             return null;
         }
         BuildPortals.logger.log(BuildPortals.logLevel, "Portal walls found and are tall enough. Continuing.");

@@ -7,7 +7,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
@@ -17,7 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 
 public class PortalListener implements Listener {
@@ -30,7 +28,7 @@ public class PortalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent event) {
         Vehicle vehicle = event.getVehicle();
-        BuildPortals.logger.log(BuildPortals.logLevel, "Vehicle move: " + vehicle.toString());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Vehicle move: " + vehicle.toString());
         vehicleMove(vehicle);
     }
 
@@ -38,12 +36,12 @@ public class PortalListener implements Listener {
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
         Entity vehicle = player.getVehicle();
-        BuildPortals.logger.log(BuildPortals.logLevel, "Player move: " + player.getDisplayName());
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Player move: " + player.getDisplayName());
         if (vehicle != null) {
-            if (vehicle instanceof AbstractHorse || vehicle instanceof Pig) {
+            if (vehicle instanceof Pig) {//if (vehicle instanceof AbstractHorse || vehicle instanceof Pig) {
                 // For Horses or Pigs, a player can fire a PlayerMoveEvent, but we
                 // want to defer to the vehicle move logic.
-                BuildPortals.logger.log(BuildPortals.logLevel, "On horse: " + player.getDisplayName());
+                //BuildPortals.logger.log(BuildPortals.logLevel, "On horse: " + player.getDisplayName());
                 vehicleMove((Vehicle)vehicle);
             }
             return;
@@ -62,20 +60,15 @@ public class PortalListener implements Listener {
             }
             return;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Teleporting " + player);
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Teleporting " + player);
         /* We will immediately add player to alreadyOnPortal but defer teleportation. This allows the more heavy
         task of teleporting to happen asynchronously but prevents multiple teleports from being scheduled from
         consecutive playerMove events.
          */
         alreadyOnPortal.add(player.getUniqueId());
-        BuildPortals.logger.log(BuildPortals.logLevel, "Added " + player + " to alreadyOnPortal");
-        BuildPortals.logger.log(BuildPortals.logLevel, "alreadyOnPortal: " + alreadyOnPortal);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                portal.teleport(player);
-            }
-        }.runTaskLater(BuildPortals.plugin, 1);
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Added " + player + " to alreadyOnPortal");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "alreadyOnPortal: " + alreadyOnPortal);
+        BuildPortals.plugin.getServer().getScheduler().scheduleSyncDelayedTask(BuildPortals.plugin, () -> portal.teleport(player), 1L);
     }
 
     private void vehicleMove(Vehicle vehicle) {
@@ -85,33 +78,31 @@ public class PortalListener implements Listener {
             if (alreadyOnPortal.contains(vehicle.getUniqueId()) && loc.getChunk().isLoaded()) {
                 alreadyOnPortal.remove(vehicle.getUniqueId());
             }
-            BuildPortals.logger.log(BuildPortals.logLevel, "Removing " + vehicle + " from alreadyOnPortal");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Removing " + vehicle + " from alreadyOnPortal");
             return;
         }
         if (alreadyOnPortal.contains(vehicle.getUniqueId())) {
-            BuildPortals.logger.log(BuildPortals.logLevel, vehicle + " already in a portal");
+            //BuildPortals.logger.log(BuildPortals.logLevel, vehicle + " already in a portal");
             return;
         }
 
-        BuildPortals.logger.log(BuildPortals.logLevel, "Teleporting " + vehicle);
+       // BuildPortals.logger.log(BuildPortals.logLevel, "Teleporting " + vehicle);
         /* We will immediately add vehicle to alreadyOnPortal but defer teleportation. This allows the more heavy
         task of teleporting to happen asynchronously but prevents multiple teleports from being scheduled from
         consecutive vehicleMove events.
          */
         alreadyOnPortal.add(vehicle.getUniqueId());
-        BuildPortals.logger.log(BuildPortals.logLevel, "Added " + vehicle + " to alreadyOnPortal");
-        BuildPortals.logger.log(BuildPortals.logLevel, "alreadyOnPortal: " + alreadyOnPortal);
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Entity teleportedVehicle = portal.teleport(vehicle);
-                // Have to ensure that cloned entities area also captured in alreadyOnPortal
-                if (teleportedVehicle != null) {
-                    alreadyOnPortal.add(teleportedVehicle.getUniqueId());
-                    alreadyOnPortal.remove(vehicle.getUniqueId());
-                }
+       // BuildPortals.logger.log(BuildPortals.logLevel, "Added " + vehicle + " to alreadyOnPortal");
+       // BuildPortals.logger.log(BuildPortals.logLevel, "alreadyOnPortal: " + alreadyOnPortal);
+
+        BuildPortals.plugin.getServer().getScheduler().scheduleSyncDelayedTask(BuildPortals.plugin, () -> {
+            Entity teleportedVehicle = portal.teleport(vehicle);
+            // Have to ensure that cloned entities area also captured in alreadyOnPortal
+            if (teleportedVehicle != null) {
+                alreadyOnPortal.add(teleportedVehicle.getUniqueId());
+                alreadyOnPortal.remove(vehicle.getUniqueId());
             }
-        }.runTaskLater(BuildPortals.plugin, 1);
+        }, 1L);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -120,7 +111,7 @@ public class PortalListener implements Listener {
          * Then check if there is a matching IncompletePortal with the same activator.
          * If there is, create a new Portal from the two IncompletePortals.
          */
-        BuildPortals.logger.log(BuildPortals.logLevel, "Block place event registered");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Block place event registered");
 
         // Get relevant info about event
         Block block = event.getBlockPlaced();
@@ -128,14 +119,14 @@ public class PortalListener implements Listener {
             return;
         }
 
-        BuildPortals.logger.log(BuildPortals.logLevel, "Detected placed block that is a portal activator");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Detected placed block that is a portal activator");
         Player player;
         player = event.getPlayer();
         if (!player.hasPermission("buildportals.activate")) {
             player.sendMessage("You do not have permission to activate portals!");
             return;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Player " + player.getDisplayName() + " has appropriate permissions");
+       // BuildPortals.logger.log(BuildPortals.logLevel, "Player " + player.getDisplayName() + " has appropriate permissions");
 
         /* We have to grab a handle to the pre-existing incompletePortal before we try to create a new one
          * because creating a new one dislodges the pre-existing one from IncompletePortal's static collection.
@@ -145,7 +136,7 @@ public class PortalListener implements Listener {
         if (newIncompletePortal == null) {
             return;
         }
-        BuildPortals.logger.log(BuildPortals.logLevel, "Block completes a portal");
+        //BuildPortals.logger.log(BuildPortals.logLevel, "Block completes a portal");
 
         if (incompletePortal == null) {
             newIncompletePortal.saveConfig();

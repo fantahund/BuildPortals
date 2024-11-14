@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -32,11 +32,11 @@ public abstract class AbstractPortal {
     protected boolean integrityCheck(PortalFrame[] frames) {
         for (PortalFrame frame : frames) {
             String frameMaterialName = BuildPortals.config.getString("PortalMaterial");
-            BuildPortals.logger.log(BuildPortals.logLevel, "Checking portal frames");
+            //BuildPortals.logger.log(BuildPortals.logLevel, "Checking portal frames");
             for (Vector vec : frame.exterior) {
                 Location loc = new Location(frame.world, vec.getX(), vec.getY(), vec.getZ());
                 if ( ! loc.getBlock().getType().name().equals(Material.getMaterial(frameMaterialName).name())) {
-                    BuildPortals.logger.log(BuildPortals.logLevel, "Block is not frame material at " + loc.toString());
+                    //BuildPortals.logger.log(BuildPortals.logLevel, "Block is not frame material at " + loc.toString());
                     return false;
                 }
             }
@@ -52,8 +52,9 @@ public abstract class AbstractPortal {
             if (frame.interior.size() > 0) {
                 Vector vec = frame.interior.get(0);
                 Location loc = new Location(frame.world, vec.getX(), vec.getY(), vec.getZ());
-                loc.getWorld().strikeLightningEffect(loc);
-                loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
+                loc.getWorld().playEffect(loc, Effect.BLAZE_SHOOT, 1);
+                //loc.getWorld().strikeLightningEffect(loc);
+                //loc.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, loc, 1);
             }
         }
     }

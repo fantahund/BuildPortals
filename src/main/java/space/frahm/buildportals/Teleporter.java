@@ -18,7 +18,7 @@ public class Teleporter {
 
     public static Entity teleport(Entity entity, @Nonnull Location destination) {
         BuildPortals.logger.log(BuildPortals.logLevel, "Entering teleport(Entity, ...) method");
-        if (entity instanceof Vehicle) {
+        /*if (entity instanceof Vehicle) {
             List<Entity> passengers = (entity).getPassengers();
             List<Entity> destPassengers = new ArrayList<>();
             for (Entity passenger: passengers) {
@@ -40,14 +40,16 @@ public class Teleporter {
                 }
             }
             return entity;
-        } else if (entity instanceof Player) {
+        } else */
+
+        if (entity instanceof Player) {
             entity = teleport((Player) entity, destination);
         } else {
-            entity = cloneTeleport(entity, destination);
+            //entity = cloneTeleport(entity, destination);
         }
         return entity;
     }
-    
+
     private static Player teleport(Player player, @Nonnull Location destination) {
         BuildPortals.logger.log(BuildPortals.logLevel, "Entering teleport(Player, ...) method");
         if (!player.hasPermission("buildportals.teleport")) {
@@ -60,14 +62,14 @@ public class Teleporter {
         // There doesn't seem to be an easy way to get a collection of leashed entities
         // from the player directly...
         World world = source.getWorld();
-        if ( world == null ) {
+        if (world == null) {
             BuildPortals.logger.log(BuildPortals.logLevel, "Player's world is " + world + "!");
             return null;
         }
-        Collection<Entity> entities = world.getNearbyEntities(source, 11, 11, 11);
-        for (Entity ent: entities) {
+        /*Collection<Entity> entities = world.getNearbyEntities(source, 11, 11, 11);
+        for (Entity ent : entities) {
             if (ent instanceof LivingEntity) {
-                if (((LivingEntity)ent).isLeashed() && ((LivingEntity)ent).getLeashHolder() == player) {
+                if (((LivingEntity) ent).isLeashed() && ((LivingEntity) ent).getLeashHolder() == player) {
                     Entity destEnt = teleport(ent, destination);
                     if (destEnt != null) {
                         leadees.add((LivingEntity) destEnt);
@@ -76,14 +78,14 @@ public class Teleporter {
             }
         }
 
-        player.teleport(destination);
-        for (LivingEntity ent: leadees) {
+        for (LivingEntity ent : leadees) {
             ent.setLeashHolder(player);
-        }
+        }*/
+        player.teleport(destination);
         return player;
     }
-    
-    private static Entity cloneTeleport(Entity entity, Location destination) {
+
+    /*private static Entity cloneTeleport(Entity entity, Location destination) {
         BuildPortals.logger.log(BuildPortals.logLevel, "Entering teleport(Entity, ...) method");
         Cloner cloner = new Cloner();
         Entity destEntity = cloner.clone(entity, destination);
@@ -92,5 +94,5 @@ public class Teleporter {
             entity.remove();
         }
         return destEntity;
-    }
+    }*/
 }

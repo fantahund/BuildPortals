@@ -1,11 +1,13 @@
 package space.frahm.buildportals;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -14,9 +16,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.java.JavaPluginLoader;
 
 public class BuildPortals extends JavaPlugin {
     // Hacky way to turn on DEBUG for plugin only
@@ -28,14 +28,6 @@ public class BuildPortals extends JavaPlugin {
     public static PortalListener listener;
     public static HashSet<Material> activatorMaterials;
 
-    public BuildPortals() {
-        super();
-    }
-
-    protected BuildPortals(JavaPluginLoader loader, PluginDescriptionFile description, File dataFolder, File file) {
-        super(loader, description, dataFolder, file);
-    }
-
     @Override
     public void onEnable() {
         plugin = this;
@@ -43,16 +35,21 @@ public class BuildPortals extends JavaPlugin {
         logger = this.getLogger();
         logLevel = Level.OFF;
         // Set default portal building material to emerald blocks
-        config.addDefault("PortalMaterial", Material.EMERALD_BLOCK.name());
+        config.addDefault("PortalMaterial", Material.LAPIS_BLOCK.name());
         /* Set default portal activating material to be:
          * - Redstone Blocks
          * - Gold Blocks
          * - Diamond Blocks
          */
         ArrayList<String> activators = new ArrayList<>();
-        activators.add(Material.REDSTONE_BLOCK.name());
+        //activators.add(Material.REDSTONE_BLOCK.name());
         activators.add(Material.GOLD_BLOCK.name());
         activators.add(Material.DIAMOND_BLOCK.name());
+        for (Material value : Material.values()) {
+            if (value.isBlock()) {
+                activators.add(value.name());
+            }
+        }
         config.addDefault("PortalActivators", activators);
         config.addDefault("Debug", false);
         config.options().copyDefaults(true);
@@ -75,6 +72,8 @@ public class BuildPortals extends JavaPlugin {
         getServer().getPluginManager().registerEvents(listener, this);
         Portal.loadPortalsFromConfig();
         IncompletePortal.loadPortalsFromConfig();
+
+        getServer().getScheduler().scheduleSyncRepeatingTask(this, this::tickPortals, 0, 15);
     }
 
     @Override
@@ -240,5 +239,37 @@ public class BuildPortals extends JavaPlugin {
             }
         }
         return true;
+    }
+
+    public void tickPortals() {
+        Bukkit.getWorlds().forEach(world -> Portal.getInteriors().getOrDefault(world.getName(), new HashSet<>()).forEach(vector -> {
+            Location location = new Location(world, vector.getBlockX(), vector.getBlockY(), vector.getBlockZ());
+            Chunk chunk = world.getChunkAt(location.getBlockX(), location.getBlockZ());
+            if (chunk.isLoaded()) {
+                world.getPlayers().forEach(player -> {
+                    if (distanceSquared(player.getLocation(), location) <= 20) {
+                        player.playEffect(location, Effect.MOBSPAWNER_FLAMES, 20);
+                    }
+                });
+            }
+        }));
+    }
+
+
+    public double distanceSquared(Location o, Location loc) {
+        if (o.getWorld() != null && loc.getWorld() != null) {
+            if (o.getWorld() != loc.getWorld()) {
+                String var10002 = loc.getWorld().getName();
+                throw new IllegalArgumentException("Cannot measure distance between " + var10002 + " and " + o.getWorld().getName());
+            } else {
+                return square(loc.getX() - o.getX()) + square(loc.getY() - o.getY()) + square(loc.getZ() - o.getZ());
+            }
+        } else {
+            throw new IllegalArgumentException("Cannot measure distance to a null world");
+        }
+    }
+
+    public static double square(double num) {
+        return num * num;
     }
 }

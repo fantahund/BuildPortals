@@ -14,7 +14,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Boat;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -298,10 +297,10 @@ public class Portal extends AbstractPortal {
             portalLoc = portalVec.toLocation(destFrame.world);
             forwardBlock = destFrame.world.getBlockAt(portalLoc.getBlockX() + forwardVec.getBlockX(), portalLoc.getBlockY() + forwardVec.getBlockY(), portalLoc.getBlockZ() + forwardVec.getBlockZ());
             backwardBlock = destFrame.world.getBlockAt(portalLoc.getBlockX() + backwardVec.getBlockX(), portalLoc.getBlockY() + backwardVec.getBlockY(), portalLoc.getBlockZ() + backwardVec.getBlockZ());
-            if (!forwardBlock.getType().isSolid()) {
+            if (!forwardBlock.getType().isBlock()) {
                 forwardNonSolidCount += 1;
             }
-            if (!backwardBlock.getType().isSolid()) {
+            if (!backwardBlock.getType().isBlock()) {
                 backwardNonSolidCount += 1;
             }
 
@@ -384,7 +383,7 @@ public class Portal extends AbstractPortal {
         double yMargin = 2D;
         double zMargin = 0.3;
         double xMargin = 0.3;
-        if (entity instanceof AbstractHorse || entity instanceof Boat) {
+        if (entity instanceof Boat) { //entity instanceof AbstractHorse ||
             xMargin = 1D;
             zMargin = 1D;
         }
@@ -507,5 +506,17 @@ public class Portal extends AbstractPortal {
         portalData.put("B.yaw", Float.toString(frames[1].yaw));
         BuildPortals.config.createSection(configKey, portalData);
         BuildPortals.plugin.saveConfig();
+    }
+
+    public static HashSet<Portal> getPortals() {
+        return portals;
+    }
+
+    public PortalFrame[] getFrames() {
+        return frames;
+    }
+
+    public static HashMap<String, HashSet<Vector>> getInteriors() {
+        return interiors;
     }
 }
